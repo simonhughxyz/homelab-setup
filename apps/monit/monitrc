@@ -1,0 +1,251 @@
+###############################################################################
+## Monit control file
+###############################################################################
+##
+## Comments begin with a '#' and extend through the end of the line. Keywords
+## are case insensitive. All path's MUST BE FULLY QUALIFIED, starting with '/'.
+##
+## Below you will find examples of some frequently used statements. For
+## information about the control file and a complete list of statements and
+## options, please have a look in the Monit manual.
+##
+##
+###############################################################################
+## Global section
+###############################################################################
+##
+## Start Monit in the background (run as a daemon):
+#
+set daemon 60 # check services at 1-minute intervals
+
+# with start delay 240 # optional: delay the first check by 4-minutes (by
+# # default Monit check immediately after Monit start)
+#
+
+# enable local http socket, used by the cli to get status
+set httpd
+     port 2812
+     use address 127.0.0.1
+     allow 127.0.0.1
+
+## Set syslog logging with the 'daemon' facility. If the FACILITY option is
+## omitted, Monit will use 'user' facility by default. If you want to log to
+## a standalone log file instead, specify the full path to the log file
+#
+# set logfile syslog facility log_daemon
+set logfile /var/log/monit.log
+
+#
+#
+## Set the location of the Monit id file which stores the unique id for the
+## Monit instance. The id is generated and stored on first Monit start. By
+## default the file is placed in $HOME/.monit.id.
+#
+# set idfile /var/.monit.id
+set idfile /var/run/monit/monit.id
+
+#
+## Set the location of the Monit state file which saves monitoring states
+## on each cycle. By default the file is placed in $HOME/.monit.state. If
+## the state file is stored on a persistent filesystem, Monit will recover
+## the monitoring state across reboots. If it is on temporary filesystem, the
+## state will be lost on reboot which may be convenient in some situations.
+#
+set statefile /var/run/monit/monit.state
+set pidfile /var/run/monit/monit.pid
+
+#
+## Set the list of mail servers for alert delivery. Multiple servers may be
+## specified using a comma separator. If the first mail server fails, Monit
+# will use the second mail server in the list and so on. By default Monit uses
+# port 25 - it is possible to override this with the PORT option.
+#
+# set mailserver mail.bar.baz, # primary mailserver
+# backup.bar.baz port 10025, # backup mailserver on port 10025
+# localhost # fallback relay
+#set mailserver 127.0.0.1 on port 465 USERNAME "server@ettingervickers.co.uk"
+#    PASSWORD "5R4t9w2N8f3p%" USING TLSV1
+
+# used to send alerts to gotify
+set mailserver 127.0.0.1 on port 2525
+
+## By default Monit will drop alert events if no mail servers are available.
+## If you want to keep the alerts for later delivery retry, you can use the
+## EVENTQUEUE statement. The base directory where undelivered alerts will be
+## stored is specified by the BASEDIR option. You can limit the maximal queue
+## size using the SLOTS option (if omitted, the queue is limited by space
+## available in the back end filesystem).
+#
+set eventqueue
+basedir /var/lib/monit/events # set the base directory where events will be stored
+slots 100 # optionally limit the queue size
+
+#
+#
+## Monit by default uses the following format for alerts if the the mail-format
+## statement is missing::
+## --8<--
+## set mail-format {
+## from: monit@$HOST
+## subject: monit alert -- $EVENT $SERVICE
+## message: $EVENT Service $SERVICE
+## Date: $DATE
+## Action: $ACTION
+## Host: $HOST
+## Description: $DESCRIPTION
+##
+## Your faithful employee,
+## Monit
+## }
+## --8<--
+##
+## You can override this message format or parts of it, such as subject
+## or sender using the MAIL-FORMAT statement. Macros such as $DATE, etc.
+## are expanded at runtime. For example, to override the sender, use:
+#
+SET MAIL-FORMAT {
+   from: lunar@mo-net.xyz
+subject: mo-net: monit on lunar -- $EVENT $SERVICE
+message: $EVENT Service $SERVICE
+   date: $DATE
+ Action: $ACTION
+   Host: $HOST
+Description: $DESCRIPTION
+Your faithful employee,
+Monit
+}
+
+## You can set alert recipients whom will receive alerts if/when a
+## service defined in this file has errors. Alerts may be restricted on
+## events by using a filter as in the second example below.
+#
+# receive all alerts with reminders every 5 cycles
+SET ALERT lunar@mo-net.xyz WITH REMINDER ON 5 CYCLES
+
+# BUT NOT ON { DATA }
+
+# set alert manager@foo.bar only on { timeout } # receive just service-
+# # timeout alert
+#
+#
+
+# Check internet access
+CHECK HOST google_dns WITH ADDRESS 8.8.8.8
+    IF FAILED icmp type echo
+        count 3 with timeout 3 seconds
+    THEN ALERT
+
+# check router is reachable
+CHECK HOST rooter WITH ADDRESS 10.0.10.1
+    IF FAILED icmp type echo
+        count 3 with timeout 3 seconds
+    THEN ALERT
+
+# Check wifi-ap is reachable
+CHECK HOST wifi-ap WITH ADDRESS 10.0.11.5
+    IF FAILED icmp type echo
+        count 3 with timeout 3 seconds
+    THEN ALERT
+
+# Test raid array
+CHECK PROGRAM raid-md1 WITH PATH "/sbin/mdadm --detail --test /dev/md1"
+   EVERY 30 CYCLES
+   IF STATUS != 0 THEN ALERT
+
+# Test raid array
+CHECK PROGRAM raid-md2 WITH PATH "/sbin/mdadm --detail --test /dev/md2"
+   EVERY 30 CYCLES
+   IF STATUS != 0 THEN ALERT
+
+# Test raid array
+CHECK PROGRAM raid-md21 WITH PATH "/sbin/mdadm --detail --test /dev/md21"
+   EVERY 30 CYCLES
+   IF STATUS != 0 THEN ALERT
+
+# Test raid array
+CHECK PROGRAM raid-md22 WITH PATH "/sbin/mdadm --detail --test /dev/md22"
+   EVERY 30 CYCLES
+   IF STATUS != 0 THEN ALERT
+
+# check that public ip has not changed
+CHECK PROGRAM public-ip WITH PATH "/etc/monit/public-ip.sh"
+   EVERY 60 CYCLES
+   IF STATUS != 0 THEN ALERT
+
+# check for public open ports
+CHECK PROGRAM open-ports WITH PATH "/etc/monit/open-ports.sh"
+   EVERY 60 CYCLES
+   IF STATUS != 0 THEN ALERT
+
+# nobody should be using port 25
+CHECK FILE syslog WITH PATH "/var/log/syslog"
+    EVERY 30 CYCLES
+    IF MATCH "Port 25 outbound attempt:" THEN ALERT
+
+# make sure ssh is running
+CHECK PROCESS ssh WITH PIDFILE /var/run/sshd.pid
+    START PROGRAM = "/etc/rc.d/rc.sshd start"
+    IF NOT EXIST FOR 10 CYCLES THEN START
+
+# Dropbear should not be running normally
+# its only there in case openssh is down
+# and so I can manually start an instance of dropbear
+CHECK PROCESS dropbear MATCHING "dropbear"
+    START PROGRAM = "/etc/monit/dropbear.sh start"
+    STOP PROGRAM = "/etc/monit/dropbear.sh stop"
+    EVERY 5 CYCLES
+    IF EXIST THEN ALERT
+
+# make sure apcupsd is running for the battery UPS
+CHECK PROCESS apcupsd WITH PIDFILE /var/run/apcupsd.pid
+    START PROGRAM = "/etc/rc.d/rc.apcupsd start"
+    IF NOT EXIST THEN START
+
+# check drive health
+CHECK PROGRAM smart-sda WITH PATH "/usr/sbin/smartctl -H /dev/sda"
+   EVERY 30 CYCLES
+   IF STATUS != 0 THEN ALERT
+
+# check drive health
+CHECK PROGRAM smart-sdb WITH PATH "/usr/sbin/smartctl -H /dev/sdb"
+   EVERY 30 CYCLES
+   IF STATUS != 0 THEN ALERT
+
+# check hardware temperature
+CHECK PROGRAM sensors WITH PATH /usr/bin/sensors
+    IF STATUS != 0
+    THEN ALERT
+
+# check cpu usage
+CHECK SYSTEM $HOST
+    IF CPU USAGE (USER) > 80% for 40 cycles then alert
+    IF CPU USAGE (SYSTEM) > 50% for 40 cycles then alert
+    IF CPU USAGE (WAIT) > 50% for 40 cycles then alert
+
+# alert when root is getting full
+CHECK DEVICE rootfs WITH PATH /
+    EVERY 60 CYCLES
+    IF SPACE USAGE > 90% THEN ALERT
+
+# alert when encrypted partition is getting full
+CHECK filesystem crypt WITH PATH /srv
+    EVERY 60 CYCLES
+    IF SPACE USAGE > 90% THEN ALERT
+
+# make sure eth0 interface is up
+CHECK network eth0 WITH INTERFACE eth0
+    START PROGRAM = "/usr/sbin/ip link set eth0 up"
+    IF FAILED LINK THEN START
+    IF FAILED LINK THEN ALERT
+
+# make sure eth1 interface is up
+CHECK network eth1 WITH INTERFACE eth1
+    START PROGRAM = "/usr/sbin/ip link set eth1 up"
+    IF FAILED LINK THEN START
+    IF FAILED LINK THEN ALERT
+
+# make sure vpn interface is up
+CHECK network wg0 WITH INTERFACE wg0
+    START PROGRAM = "/usr/bin/wg-quick up wg0"
+    IF FAILED LINK THEN START
+    IF FAILED LINK THEN ALERT

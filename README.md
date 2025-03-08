@@ -12,6 +12,7 @@ This repository contains configurations for various homelab services:
 - [DHCP Server](apps/dhcpd/README.md) - ISC DHCPD configuration and setup
 - [DNS Server](apps/bind/README.md) - Bind DNS configuration and setup
 - [NTP Server](apps/ntpd/README.md) - NTPD configuration and setup
+- [Monit](apps/monit/README.md) - Monit configuration and setup
 
 
 ## Scripts
