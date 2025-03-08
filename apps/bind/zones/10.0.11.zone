@@ -1,0 +1,11 @@
+$TTL 7200       ; 2 hours
+$ORIGIN 10.0.11.IN-ADDR.ARPA.
+@                     IN SOA ns1.mo-net.lan. hostmaster.mo-net.lan. (
+                                1970010100 ; serial (YYYYMMDDXX)
+                                28800      ; refresh (8 hours)
+                                1800       ; retry (30 minutes)
+                                604800     ; expire (1 week)
+                                3600       ; minimum (1 hour)
+)
+
+@                     IN NS ns1.mo-net.lan.

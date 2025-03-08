@@ -1,0 +1,12 @@
+$ORIGIN mo-net.lan.
+$TTL 7200 ; 2 hours
+@                 SOA  ns1 hostmaster (
+                          1970010100 ; serial (YYYYMMDDXX)
+                          28800      ; refresh (8 hours)
+                          1800       ; retry (30 minutes)
+                          604800     ; expire (1 week)
+                          3600       ; minimum (1 hour)
+                        )
+                  NS   ns1
+@                 A    10.0.11.1
+ns1               A    10.0.11.1
