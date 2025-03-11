@@ -13,6 +13,7 @@ This repository contains configurations for various homelab services:
 - [DNS Server](apps/bind/README.md) - Bind DNS configuration and setup
 - [NTP Server](apps/ntpd/README.md) - NTPD configuration and setup
 - [Monit](apps/monit/README.md) - Monit configuration and setup
+- [Gotify](apps/gotify/README.md) - Gotify configuration and setup
 
 
 ## Scripts

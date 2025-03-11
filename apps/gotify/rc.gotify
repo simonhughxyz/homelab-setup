@@ -1,0 +1,29 @@
+#!/bin/sh
+
+GOTIFY="/usr/local/bin/gotify"
+GOTIFY_USER="gotify"
+
+case "$1" in
+  stop)
+    if /usr/bin/pgrep -u "$GOTIFY_USER" -f $GOTIFY >/dev/null; then
+      echo "Stop gotify..."
+      /usr/bin/pkill -u "$GOTIFY_USER" -f "$GOTIFY"
+    else
+      echo "gotify is not running..."
+    fi
+    exit 0
+          ;;
+  start)
+    echo "Start gotify..."
+    su - $GOTIFY_USER -c "$GOTIFY" > /dev/null 2>&1 &
+    ;;
+  restart)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+  *)
+    echo "usage: $0 { start | stop | restart }" >&2
+    exit 1
+    ;;
+esac
