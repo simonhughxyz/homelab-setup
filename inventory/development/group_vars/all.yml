@@ -1,0 +1,12 @@
+ansible_user: root
+
+dhcp_interface: eth1
+dhcp_subnet: 10.0.3.0
+dhcp_netmask: 255.255.255.0
+dhcp_range_start: 10.0.3.100
+dhcp_range_end: 10.0.3.199
+dhcp_router: 10.0.2.1
+dhcp_domain_name: dev.mo-net.lan
+dhcp_ntp: ntp.dev.mo-net.lan
+dhcp_domain_ip: 10.0.2.50
+dhcp_ddns_key_name: ddns-key

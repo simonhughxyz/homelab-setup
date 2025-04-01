@@ -1,0 +1,5 @@
+[gateway]
+10.0.2.50
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
