@@ -1,0 +1,24 @@
+- name: Install ISC DHCP server
+  apt:
+    name: isc-dhcp-server
+    state: present
+    update_cache: true
+
+- name: Deploy dhcpd.conf
+  template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+    mode: '0644'
+  notify: restart dhcpd
+
+- name: Configure DHCP interface
+  lineinfile:
+    path: /etc/default/isc-dhcp-server
+    regexp: '^INTERFACESv4='
+    line: 'INTERFACESv4="{{ dhcp_interface }}"'
+
+- name: Ensure isc-dhcp-server is enabled and started
+  systemd:
+    name: isc-dhcp-server
+    enabled: true
+    state: started

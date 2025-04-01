@@ -1,0 +1,20 @@
+# dhcpd.conf
+#
+# Configuration file for ISC dhcpd (see 'man dhcpd.conf')
+#
+
+subnet {{ dhcp_subnet }} netmask {{ dhcp_netmask }} {
+  range {{ dhcp_range_start }} {{ dhcp_range_end }};
+  option routers {{ dhcp_router }};
+  option subnet-mask {{ dhcp_netmask }};
+  option domain-name-servers {{ dhcp_domain_name }};
+  option ntp-servers {{ dhcp_ntp }};
+}
+
+
+# Lease time configuration
+default-lease-time 86400;  # 1 day
+max-lease-time 604800;  # 1 week
+
+# Logging for troubleshooting
+log-facility local7;

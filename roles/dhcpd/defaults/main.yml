@@ -1,0 +1,12 @@
+dhcp_interface: eth1
+
+dhcp_subnet: 10.0.11.0
+dhcp_netmask: 255.255.255.0
+dhcp_range_start: 10.0.11.100
+dhcp_range_end: 10.0.11.199
+dhcp_router: 10.0.11.1
+dhcp_domain_name: mo-net.lan
+dhcp_ntp: ntp.mo-net.lan
+
+dhcp_domain_ip: 10.0.11.1
+dhcp_ddns_key_name: ddns-key
