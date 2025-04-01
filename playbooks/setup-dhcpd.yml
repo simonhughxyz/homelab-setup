@@ -1,0 +1,6 @@
+- name: Configure DHCP Server
+  hosts: gateway
+  become: true
+
+  roles:
+    - dhcpd
