@@ -1,0 +1,14 @@
+# Installed roles from galaxy
+galaxy/*
+
+# SSH keys and secrets (just in case)
+*.key
+*.pem
+*.crt
+*.pub
+vault.yml
+
+# Editor files
+*.swp
+*.swo
+*~
