@@ -15,10 +15,10 @@ ansible-homelab/
 │   ├── development/      # Dev environment hosts + vars
 │   └── production/       # Production environment
 ├── playbooks/
-│   ├── deploy-dhcp.yml   # Deploy DHCP server
+│   ├── setup-dhcpd.yml   # Deploy DHCP server
 │   └── site.yml          # Main entry point
 ├── roles/
-│   ├── dhcp/             # DHCP server setup (ISC)
+│   ├── dhcpd/             # DHCP server setup (ISC)
     └── user_management/  # Manage system users
 ├── ansible.cfg
 └── README.md
