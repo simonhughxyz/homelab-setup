@@ -31,3 +31,4 @@ This repository is organized into modular roles to manage various infrastructure
 | Role Name         | Description                                              |
 |-------------------|----------------------------------------------------------|
 | [`user_management`](roles/user_management/README.md) | Manages system users declaratively (shell, groups, etc.) |
+| [`dhcpd`](roles/dhcpd/README.md)                 | Installs and configures ISC DHCP server with subnet, lease, and interface options |
