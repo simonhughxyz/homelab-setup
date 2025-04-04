@@ -1,0 +1,10 @@
+- name: Ensure managed users exist
+  user:
+    name: "{{ item.name }}"
+    shell: "{{ item.shell | default('/bin/bash') }}"
+    system: "{{ item.system | default(false) }}"
+    groups: "{{ item.groups | default(omit) }}"
+    append: true
+    state: present
+  loop: "{{ managed_users | default([]) }}"
+  when: item.name is defined
