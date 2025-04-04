@@ -22,3 +22,12 @@ ansible-homelab/
     └── user_management/  # Manage system users
 ├── ansible.cfg
 └── README.md
+```
+
+## 📦 Roles
+
+This repository is organized into modular roles to manage various infrastructure components.
+
+| Role Name         | Description                                              |
+|-------------------|----------------------------------------------------------|
+| [`user_management`](roles/user_management/README.md) | Manages system users declaratively (shell, groups, etc.) |
