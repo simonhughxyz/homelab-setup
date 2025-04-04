@@ -19,5 +19,6 @@ ansible-homelab/
 │   └── site.yml          # Main entry point
 ├── roles/
 │   ├── dhcp/             # DHCP server setup (ISC)
+    └── user_management/  # Manage system users
 ├── ansible.cfg
 └── README.md
