@@ -1,0 +1,5 @@
+- name: Create system users
+  hosts: all
+  become: true
+  roles:
+    - user_management
