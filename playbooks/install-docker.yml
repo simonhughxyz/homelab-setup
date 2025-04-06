@@ -1,0 +1,27 @@
+- name: Install Docker with pinned version and configure service
+  hosts: all
+  become: true
+
+  vars:
+    # Pin Docker to version (modify this if needed)
+    docker_version: "5:28.0.4-1~debian.12~bookworm"
+
+    # Pin the Docker Compose plugin version
+    docker_compose_version: "2.34.0"  # Modify this to the desired version
+
+  roles:
+    # Docker installation role from Ansible Galaxy (https://galaxy.ansible.com/geerlingguy/docker)
+    - geerlingguy.docker
+
+  tasks:
+    - name: Pin Docker to the current version (prevent upgrades)
+      command: apt-mark hold docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-buildx-plugin
+      ignore_errors: yes  # This prevents failure if the packages are already held
+
+    - name: Pin Docker Compose version
+      command: apt-mark hold docker-compose-plugin
+      ignore_errors: yes  # In case it's already held
+
+    - name: Clean up unused Docker images and containers
+      command: docker system prune -f
+      when: clean_up_docker | default(true)
