@@ -1,0 +1,22 @@
+# site.yml
+#
+# Primary orchestration playbook for the homelab.
+# Runs all major provisioning playbooks in order.
+#
+# To run:
+#   ansible-playbook -i inventory/production playbooks/site.yml
+#
+# Or for development:
+#   ansible-playbook -i inventory/development playbooks/site.yml
+
+# Set up networking interfaces and routes
+- import_playbook: setup-network.yml
+
+# Configure DHCP server (ISC dhcpd)
+- import_playbook: setup-dhcpd.yml
+
+# Create and configure users
+- import_playbook: configure-users.yml
+
+# Install and pin Docker to a version
+- import_playbook: install-docker.yml
