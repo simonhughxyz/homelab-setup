@@ -1,0 +1,17 @@
+- name: Enable systemd-networkd
+  systemd:
+    name: systemd-networkd
+    enabled: true
+    state: started
+
+- name: Ensure /etc/systemd/network exists
+  file:
+    path: /etc/systemd/network
+    state: directory
+
+- name: Configure network interfaces
+  template:
+    src: "interface.network.j2"
+    dest: "/etc/systemd/network/{{ item.name }}.network"
+  loop: "{{ interfaces }}"
+  notify: restart networking

@@ -1,0 +1,2 @@
+- import_tasks: udev.yml
+- import_tasks: static_ip.yml

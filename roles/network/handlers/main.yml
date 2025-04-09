@@ -1,0 +1,13 @@
+- name: update initramfs
+  command: update-initramfs -u
+  notify: reboot system
+
+- name: reboot system
+  reboot:
+    msg: "Rebooting to apply udev NIC renaming"
+    reboot_timeout: 300
+
+- name: restart networking
+  systemd:
+    name: systemd-networkd
+    state: restarted

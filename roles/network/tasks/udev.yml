@@ -1,0 +1,42 @@
+- name: Collect interface/mac pairs
+  set_fact:
+    interface_mac_list: >-
+      {%- set pairs = [] -%}
+      {%- for iface in ansible_interfaces -%}
+        {%- set mac = (lookup('vars', 'ansible_' + iface).macaddress | default('N/A', true)) -%}
+        {%- set _ = pairs.append(iface + ' → ' + mac) -%}
+      {%- endfor -%}
+      {{ pairs }}
+
+- name: Show available MAC addresses per interface
+  debug:
+    msg: |
+      💡 Available interfaces and MAC addresses:
+      {% for line in interface_mac_list %}
+      {{ line }}
+      {% endfor %}
+
+- name: Validate required MAC variables
+  assert:
+    that:
+      - wan_mac != ""
+      - lan_mac != ""
+    fail_msg: |
+      🚫 Required MAC variables are missing!
+
+      Please define the following in your inventory or group_vars:
+        - wan_mac (current: {{ wan_mac | default('❌ not set') }})
+        - lan_mac (current: {{ lan_mac | default('❌ not set') }})
+
+      Use the interface list above to help identify correct values.
+
+- name: Create udev rule for NIC renaming
+  copy:
+    dest: /etc/udev/rules.d/10-network-names.rules
+    content: |
+      SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="{{ wan_mac }}", NAME="{{ wan_name }}"
+      SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="{{ lan_mac }}", NAME="{{ lan_name }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: update initramfs

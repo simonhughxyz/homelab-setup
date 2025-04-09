@@ -1,0 +1,15 @@
+[Match]
+Name={{ item.name }}
+
+[Network]
+{% if item.dhcp %}
+DHCP=yes
+{% else %}
+Address={{ item.address }}
+{% if item.gateway is defined %}
+Gateway={{ item.gateway }}
+{% endif %}
+{% if item.dns is defined %}
+DNS={{ item.dns }}
+{% endif %}
+{% endif %}
